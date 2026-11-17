@@ -119,7 +119,7 @@
 
   // 1問を作る。tag は「種類|種」（例 "se_nozoku|2026-11-18:d0"）。同じ tag ならいつも同じ問題
   function make(tag) {
-    const [kind] = String(tag).split("|"), k = BY[kind];
+    const [kind] = String(tag).split("|"), k = Object.prototype.hasOwnProperty.call(BY, kind) ? BY[kind] : null; // 継承した constructor などは知らない種類として扱う（CodeRabbit kenbikyo-buhin#1）
     if (!k) return null;
     const p = k.make(rng(seedOf(tag)), k.lv);
     return { tag, kind, lv: k.lv, name: k.name, look: k.look, key: k.key, why: k.why, grp: k.grp, cat: k.cat, src: k.src.map((s) => SRC[s]), ...p };

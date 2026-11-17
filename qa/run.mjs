@@ -22,8 +22,8 @@ const PINQ = "観察ノートより。真横から見ながら回して、プレ
 // ---- 1. 問題の作り方（ブラウザを使わない）----
 // 部品の表（ゲームとは別に書いた表。data.js の答え・2段目・使う場面がこれと合うかを見る）
 // 出典：香川県教育委員会 中学1年理科 補充プリント「顕微鏡の使い方」・大野城市立中学校の学習（2026-11-17 に読んだ）
-// 答え → [何をする（kakudai 拡大・akarusa 明るさ・pinto ピント）, 使う場面]
-const CL = { "接眼レンズ": ["kakudai", "kumitate"], "対物レンズ": ["kakudai", "kumitate"], "反射鏡": ["akarusa", "akaru"], "しぼり": ["akarusa", "akaru"], "調節ねじ": ["pinto", "awaseru"] };
+// 答え → [何をする（kakudai 拡大・akarusa 明るさ・pinto ピント）, 使う場面, 決め手に必ずある言葉]
+const CL = { "接眼レンズ": ["kakudai", "kumitate", "目を近づけてのぞく"], "対物レンズ": ["kakudai", "kumitate", "レボルバー"], "反射鏡": ["akarusa", "akaru", "光を取り入れ"], "しぼり": ["akarusa", "akaru", "光の量を調節"], "調節ねじ": ["pinto", "awaseru", "ピントを合わせる"] };
 // 種類 → [答え, 問いに必ずある言葉（手がかりが入れかわっていない印）]
 const TB = {
   se_nozoku: ["接眼レンズ", "のぞく|目を近づけて"], ta_revolver: ["対物レンズ", "レボルバー"], h_mura: ["反射鏡", "むら"], sh_kukkiri: ["しぼり", "はっきり"], n_chikazuke: ["調節ねじ", "近づける"],
@@ -45,6 +45,7 @@ const TB = {
         if (!new RegExp(t[1]).test(P.q)) why.push("問いの手がかりが表とちがう");
         if (P.grp !== CL[t[0]][0]) why.push("何をするかが部品の表とちがう");
         if (P.cat !== CL[t[0]][1]) why.push("使う場面が部品の表とちがう");
+        if (typeof P.key !== "string" || !P.key.includes(t[0]) || !P.key.includes(CL[t[0]][2])) why.push("決め手が部品の表とちがう"); // CodeRabbit kenbikyo-buhin#1
         if (!P.src.some((x) => /j1_ri_h[ao]_01|576248|ohtsuna|242190/.test(x[1]))) why.push("出典が表に無い");
         if (!/どの部品？$/.test(P.q) || P.rev) why.push("問いの言い方がちがう");
         if (/接眼レンズ|対物レンズ|反射鏡|しぼり|調節ねじ/.test(P.q)) why.push("問いに部品の名前が出ている");
@@ -85,6 +86,7 @@ const TB = {
   check("2か月のうちに15種類が全部出る・前の日と同じ組の日が少ない", cover.size === 15 && sameAsPrev < 20, `${cover.size}種類・前の日と同じ ${sameAsPrev}日`);
   // 過去の日の問題が変わらない（data.js を直したときの見張り。値は 2026-11-17 に作ったもの）
   const P0 = G.make(G.dailyTags("2026-11-17")[0]);
+  check("知らない種類・継承したプロパティ名（constructor・__proto__・toString）の tag は null（CodeRabbit kenbikyo-buhin#1）", ["constructor|1", "__proto__|1", "toString|1", "nai|1"].every((t) => G.make(t) === null));
   check("第1回（2026-11-17）の1問目が作ったときのまま（並べ替え・削除で過去の日の問題を変えない）", `${P0.kind}:${P0.v}` === PIN && `${P0.q}|${P0.opts.join("/")}` === PINQ, `${P0.kind}:${P0.v} ${P0.q}`);
 }
 
